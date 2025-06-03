@@ -6,13 +6,13 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 include(cmake/Compiler.cmake)
+include(cmake/Boost.cmake)
 
 option(ENABLE_UNIT_TESTS "ENABLE UNIT TESTS" Off)
 
 set(DIR_INCLUDE ${CMAKE_CURRENT_LIST_DIR}/include)
 set(DIR_SOURCE ${CMAKE_CURRENT_LIST_DIR}/src)
 
-include(cmake/Boost.cmake)
 
 add_library(
     ${PROJECT_NAME}

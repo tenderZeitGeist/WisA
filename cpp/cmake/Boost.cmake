@@ -1,23 +1,26 @@
 message(STATUS "Fetching Boost")
 
 set(BOOST_VERSION 1.88.0)
-set(BOOST_ENABLE_CMAKE ON)
+set(BOOST_DESTINATION_DIR "${CMAKE_SOURCE_DIR}/external/boost/")
+set(BOOST_URL "https://github.com/boostorg/boost/releases/download/boost-${BOOST_VERSION}/boost-${BOOST_VERSION}-cmake.tar.gz")
 
 include(FetchContent)
 set(FETCHCONTENT_QUIET FALSE)
 
 FetchContent_Declare(
-  Boost
-        GIT_REPOSITORY https://github.com/boostorg/boost.git
-        GIT_TAG boost-${BOOST_VERSION}
-        GIT_SHALLOW TRUE
-        GIT_PROGRESS TRUE
-        OVERRIDE_FIND_PACKAGE TRUE
+        Boost
+        URL ${BOOST_URL}
         EXCLUDE_FROM_ALL
+        SOURCE_DIR ${BOOST_DESTINATION_DIR}
 )
 
-find_package(
-        Boost ${BOOST_VERSION} EXACT
-        REQUIRED COMPONENTS python)
-
 FetchContent_MakeAvailable(Boost)
+
+if(POLICY CMP0167)
+    cmake_policy(SET CMP0167 NEW)
+endif()
+
+find_package(
+  Boost ${BOOST_VERSION} EXACT
+  REQUIRED COMPONENTS python
+)
