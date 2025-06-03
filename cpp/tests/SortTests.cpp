@@ -11,7 +11,7 @@
 
 namespace {
 
-constexpr std::size_t kElements = 1'000'000;
+constexpr std::size_t kElements = 10000;
 
 }
 
@@ -65,18 +65,40 @@ protected:
 
 
 class HeapSortTestSuite : public SortingTestSuite {
-protected:
-
 };
 
-TEST_F(HeapSortTestSuite, sort_integers) {
+TEST_F(SortingTestSuite, heap_sort_integers) {
     checkHeapSort(m_ints);
 }
 
-TEST_F(HeapSortTestSuite, sort_floats) {
+TEST_F(SortingTestSuite, heap_sort_floats) {
     checkHeapSort(m_floats);
 }
 
-TEST_F(HeapSortTestSuite, sort_strings) {
+TEST_F(SortingTestSuite, heap_sort_strings) {
     checkHeapSort(m_strings);
+}
+
+TEST_F(SortingTestSuite, quick_sort_integers) {
+    checkQuickSort(m_ints);
+}
+
+TEST_F(SortingTestSuite, quick_sort_floats) {
+    checkQuickSort(m_floats);
+}
+
+TEST_F(SortingTestSuite, quick_sort_strings) {
+    checkQuickSort(m_strings);
+}
+
+TEST_F(SortingTestSuite, insertion_sort_integers) {
+    checkInsertionSort(m_ints);
+}
+
+TEST_F(SortingTestSuite, insertion_sort_floats) {
+    checkInsertionSort(m_floats);
+}
+
+TEST_F(SortingTestSuite, insertion_sort_strings) {
+    checkInsertionSort(m_strings);
 }
