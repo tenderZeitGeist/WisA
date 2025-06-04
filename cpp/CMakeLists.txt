@@ -13,6 +13,7 @@ option(ENABLE_UNIT_TESTS "ENABLE UNIT TESTS" Off)
 set(DIR_INCLUDE ${CMAKE_CURRENT_LIST_DIR}/include)
 set(DIR_SOURCE ${CMAKE_CURRENT_LIST_DIR}/src)
 
+add_subdirectory(lib/pybindings)
 
 add_library(
     ${PROJECT_NAME}
