@@ -6,7 +6,8 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 include(cmake/Compiler.cmake)
-include(cmake/Boost.cmake)
+#include(cmake/Boost.cmake)
+include(cmake/pybind11.cmake)
 
 option(ENABLE_UNIT_TESTS "ENABLE UNIT TESTS" Off)
 
