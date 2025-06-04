@@ -18,7 +18,8 @@ constexpr std::size_t kElements = 10000;
 class SortingTestSuite : public ::testing::Test {
 protected:
     void SetUp() override {
-        std::mt19937 gen(42);
+        std::random_device rd;
+        std::mt19937 gen(rd());
         std::uniform_int_distribution intDistribution(0, 1000);
         std::uniform_real_distribution floatDistribution(0., 1000.);
         std::uniform_int_distribution charDistribution('a', 'z');

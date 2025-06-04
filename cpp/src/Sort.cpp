@@ -60,7 +60,7 @@ std::size_t partition(std::vector<T>& v, std::size_t low, std::size_t high) {
 
 template<typename T>
 void quickSort(std::vector<T>& v, std::size_t low, std::size_t high) {
-    if (low >= high || low > v.size() - 1) {
+    if (low >= high || low > v.size() - 1 || high > v.size() - 1) {
         return;
     }
 
@@ -76,7 +76,6 @@ void quickSort(std::vector<T>& v) {
     if (v.empty()) {
         return;
     }
-
     quickSort(v, 0, v.size() - 1);
 }
 
