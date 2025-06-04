@@ -3,7 +3,7 @@
 **/.idea
 
 # External resources in external folder
-cpp/external
+external
 
 builds
 **/builds
@@ -24,7 +24,6 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
 lib64/
 parts/
 sdist/
