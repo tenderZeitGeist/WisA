@@ -45,7 +45,7 @@ void heapSort(std::vector<T>& v) {
 //// Quick sort
 
 template<typename T>
-std::size_t partition(std::vector<T>& v, int_fast64_t low, int_fast64_t high) {
+std::size_t partition(std::vector<T>& v, std::size_t low, std::size_t high) {
     const auto& pivot = v[high];
     auto i = low;
     for (std::size_t j = low; j < high; ++j) {
@@ -59,8 +59,8 @@ std::size_t partition(std::vector<T>& v, int_fast64_t low, int_fast64_t high) {
 }
 
 template<typename T>
-void quickSort(std::vector<T>& v, int_fast64_t low, int_fast64_t high) {
-    if (low >= high) {
+void quickSort(std::vector<T>& v, std::size_t low, std::size_t high) {
+    if (low >= high || low > v.size() - 1) {
         return;
     }
 
