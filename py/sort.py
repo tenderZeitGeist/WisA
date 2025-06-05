@@ -21,27 +21,42 @@ def insertion_sort(data):
 
 def partition(data, low, high):
     pivot = data[high]
-    i = low
+    i = low - 1
+
     for j in range(low, high):
         if data[j] <= pivot:
-            data[i], data[j] = data[j], data[i]
             i += 1
-    data[i], data[high] = data[high], data[i]
-    return i
+            data[i], data[j] = data[j], data[i]
+    data[i + 1], data[high] = data[high], data[i + 1]
+    return i + 1
 
-def quick_sort(data):
+# recursive
+
+def quick_sort_r(data):
     if not data:
         return
-    _quick_sort(data, 0, len(data) - 1)
-
-
-def _quick_sort(data, low, high):
-    if low >= high or low > len(data) - 1 or high > len(data) - 1: 
-        return
     
-    pivot = partition(data, low, high)
-    quick_sort(data, low, pivot - 1)
-    quick_sort(data, pivot + 1, high)
+    def _quick_sort(data, low, high):
+        if low < high: 
+            pivot = partition(data, low, high)
+            _quick_sort(data, low, pivot - 1)
+            _quick_sort(data, pivot + 1, high)
+    
+
+    if data:
+        _quick_sort(data, 0, len(data) - 1)
+
+# iterative/in place
+
+def quick_sort_it(data):
+    stack = [(0, len(data) - 1)]
+
+    while stack:
+        low, high = stack.pop()
+        if low < high:
+            p = partition(data, low, high)
+            stack.append((low, p - 1))
+            stack.append((p + 1, high))
 
 # 
 # heap sort
