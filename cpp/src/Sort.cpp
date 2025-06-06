@@ -47,15 +47,14 @@ void heapSort(std::vector<T>& v) {
 template<typename T>
 std::size_t partition(std::vector<T>& v, std::size_t low, std::size_t high) {
     const auto& pivot = v[high];
-    auto i = low;
-    for (std::size_t j = low; j < high; ++j) {
-        if (v[j] <= pivot) {
-            std::swap(v[i], v[j]);
-            ++i;
+    for (std::size_t i = low; i < high; ++i) {
+        if (v[i] <= pivot) {
+            std::swap(v[low], v[i]);
+            ++low;
         }
     }
-    std::swap(v[i], v[high]);
-    return i;
+    std::swap(v[low], v[high]);
+    return low;
 }
 
 template<typename T>
