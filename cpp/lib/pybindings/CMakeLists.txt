@@ -8,6 +8,12 @@ add_library(
         ${CMAKE_CURRENT_LIST_DIR}/Bindings.cpp
 )
 
+if (MSVC)
+    target_link_directories(
+        ${PROJECT_NAME} PRIVATE ${Python3_LIBRARY_DIRS}
+    )
+endif()
+
 target_link_libraries(
         ${PROJECT_NAME}
         sorting-algorithms

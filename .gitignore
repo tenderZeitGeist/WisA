@@ -188,3 +188,5 @@ cython_debug/
 
 # Exclude internal library files for the cpp sorting implemention
 !cpp/sort/sorting_algorithms.*
+.vscode/
+**/.vs
