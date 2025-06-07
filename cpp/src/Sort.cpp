@@ -1,6 +1,10 @@
 
 #include <sort/Sort.hpp>
 
+#include <concepts>
+#include <type_traits>
+#include <vector>
+
 namespace {
 
 //// Heap sort
@@ -69,7 +73,6 @@ void quickSort(std::vector<T>& v, std::size_t low, std::size_t high) {
 }
 
 
-
 template<typename T>
 void quickSort(std::vector<T>& v) {
     if (v.empty()) {
@@ -81,6 +84,13 @@ void quickSort(std::vector<T>& v) {
 //// Insertion sort
 
 template<typename T>
+concept TrivialType = std::is_trivially_copyable_v<T>;
+
+template<typename T>
+concept NonTrivialType = !TrivialType<T>;
+
+
+template<NonTrivialType T>
 void insertionSort(std::vector<T>& v) {
     if (v.empty()) {
         return;
@@ -95,6 +105,24 @@ void insertionSort(std::vector<T>& v) {
             --j;
         }
         v[j] = std::move(key);
+    }
+}
+
+template<TrivialType T>
+void insertionSort(std::vector<T>& v) {
+    if (v.empty()) {
+        return;
+    }
+
+    for (std::size_t i = 1; i < v.size(); ++i) {
+        const auto key = v[i];
+        std::size_t j = i;
+
+        while (j > 0 && v[j - 1] > key) {
+            v[j] = std::move(v[j - 1]);
+            --j;
+        }
+        v[j] = key;
     }
 }
 
