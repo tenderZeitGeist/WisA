@@ -3,9 +3,12 @@
 import unittest
 import random
 import string
-from sort import insertion_sort, quick_sort_r, quick_sort_it, heap_sort
+from sort import insertion_sort, quick_sort, quick_sort_it, heap_sort
 
 class TestSortingAlgorithms(unittest.TestCase):
+
+    def setUp(self):
+        self.n = 1000000
 
     def generate_random_ints(self, n):
         return [random.randint(-1_000_000, 1_000_000) for _ in range(n)]
@@ -26,15 +29,15 @@ class TestSortingAlgorithms(unittest.TestCase):
     #     
 
     def test_insertion_sort_ints(self):
-        data = self.generate_random_ints(5000)
+        data = self.generate_random_ints(self.n)
         self.run_sort_test(insertion_sort, data)
 
     def test_quick_sort_ints(self):
-        data = self.generate_random_ints(5000)
-        self.run_sort_test(quick_sort_it, data)
+        data = self.generate_random_ints(self.n)
+        self.run_sort_test(quick_sort, data)
 
     def test_heap_sort_ints(self):
-        data = self.generate_random_ints(5000)
+        data = self.generate_random_ints(self.n)
         self.run_sort_test(heap_sort, data)   
 
 
@@ -43,15 +46,15 @@ class TestSortingAlgorithms(unittest.TestCase):
     #
 
     def test_insertion_sort_floats(self):
-        data = self.generate_random_floats(5000)
+        data = self.generate_random_floats(self.n)
         self.run_sort_test(insertion_sort, data)
 
     def test_quick_sort_floats(self):
-        data = self.generate_random_floats(5000)
-        self.run_sort_test(quick_sort_it, data)
+        data = self.generate_random_floats(self.n)
+        self.run_sort_test(quick_sort, data)
 
     def test_heap_sort_floats(self):
-        data = self.generate_random_floats(5000)
+        data = self.generate_random_floats(self.n)
         self.run_sort_test(heap_sort, data)
 
 
@@ -60,15 +63,15 @@ class TestSortingAlgorithms(unittest.TestCase):
     #
 
     def test_insertion_sort_strings(self):
-        data = self.generate_random_strings(5000)
+        data = self.generate_random_strings(self.n)
         self.run_sort_test(insertion_sort, data)
 
     def test_quick_sort_strings(self):
-        data = self.generate_random_strings(5000)
-        self.run_sort_test(quick_sort_it, data)
+        data = self.generate_random_strings(self.n)
+        self.run_sort_test(quick_sort, data)
             
     def test_heap_sort_strings(self):
-        data = self.generate_random_strings(5000)
+        data = self.generate_random_strings(self.n)
         self.run_sort_test(heap_sort, data)
 
 
