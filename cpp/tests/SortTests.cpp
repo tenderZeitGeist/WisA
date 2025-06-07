@@ -1,13 +1,13 @@
 
 #include <gtest/gtest.h>
 
+#include <sort/Sort.hpp>
+
 #include <algorithm>
 #include <random>
 #include <ranges>
 #include <string>
 #include <vector>
-
-#include <sort/Sort.hpp>
 
 namespace {
 
@@ -64,9 +64,6 @@ protected:
     std::vector<std::string> m_strings;
 };
 
-
-class HeapSortTestSuite : public SortingTestSuite {
-};
 
 TEST_F(SortingTestSuite, heap_sort_integers) {
     checkHeapSort(m_ints);
