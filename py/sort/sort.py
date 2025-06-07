@@ -32,7 +32,7 @@ def partition(data, low, high):
 
 # recursive
 
-def quick_sort_r(data):
+def quick_sort(data):
     if not data:
         return
     
