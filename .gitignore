@@ -5,6 +5,9 @@
 # External resources in external folder
 external
 
+# Ignore measurments from CodeCarbon
+emissions.csv
+
 builds
 **/builds
 
