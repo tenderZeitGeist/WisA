@@ -9,7 +9,7 @@ template<typename T>
 void heapify(std::vector<T>& v, std::size_t n, std::size_t index) {
     auto largest = index;
     const auto left = 2 * index + 1;
-    const auto right = 2 * largest + 2;
+    const auto right = 2 * index + 2;
 
     if (left < n && v[left] > v[largest]) {
         largest = left;
