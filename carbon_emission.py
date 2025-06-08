@@ -155,7 +155,6 @@ class CarbonEmissionsApp:
                 self.end = time.time()
 
             self.emissions_data = tracker.final_emissions_data
-            messagebox.showinfo("CodeCarbon Result", self.emissions_data)
             return result
 
         except Exception as e:
