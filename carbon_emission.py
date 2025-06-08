@@ -6,6 +6,7 @@ from tkinter.messagebox import showerror
 from pathlib import Path
 from tkinter import filedialog, messagebox
 from codecarbon import EmissionsTracker
+from datetime import datetime
 from typing import Optional, List, Union
 
 def main() -> None:
@@ -31,18 +32,18 @@ class CarbonEmissionsApp:
 
         # Sorting algorithm selection
         default_implementation_value = "Python"
-        self.sorting_algorithm = tk.StringVar(value=default_implementation_value)
+        self.sorting_implementation = tk.StringVar(value=default_implementation_value)
         tk.Label(root, text="Select Sorting Algorithm:").grid(row=1, column=0, padx=10, pady=10)
         sorting_algorithms = [default_implementation_value, "C++"]
-        self.sorting_menu = tk.OptionMenu(root, self.sorting_algorithm, *sorting_algorithms)
-        self.sorting_menu.grid(row=1, column=1, padx=10, pady=10, sticky='w')
+        self.sorting_implementation_menu = tk.OptionMenu(root, self.sorting_implementation, *sorting_algorithms)
+        self.sorting_implementation_menu.grid(row=1, column=1, padx=10, pady=10, sticky='w')
 
         # Sorting algorithm selection
         default_sorting_value = "Insertion Sort"
         self.sorting_algorithm = tk.StringVar(value=default_sorting_value)
         sorting_algorithms = [default_sorting_value, "Quick Sort", "Heap Sort"]
-        self.sorting_menu = tk.OptionMenu(root, self.sorting_algorithm, *sorting_algorithms)
-        self.sorting_menu.grid(row=1, column=1, padx=10, pady=10, sticky='e')
+        self.sorting_algorithm_menu = tk.OptionMenu(root, self.sorting_algorithm, *sorting_algorithms)
+        self.sorting_algorithm_menu.grid(row=1, column=1, padx=10, pady=10, sticky='e')
 
         # Sort button
         tk.Button(root, text="Sort", command=self.sort_names).grid(row=1, column=2,
@@ -56,7 +57,7 @@ class CarbonEmissionsApp:
         self.timer_label.grid(row=4, column=0, columnspan=max_columnspan, padx=10, pady=10)
 
     def update_timer(self, duration: float):
-        self.timer_label.config(text=f"Sorting Duration: {duration:.2f} seconds")
+        self.timer_label.config(text=f"Sorting Duration: {duration:.6f} seconds")
 
     def browse_file(self):
         file_path = filedialog.askopenfilename(
@@ -73,9 +74,10 @@ class CarbonEmissionsApp:
 
         try:
             self.results_text.delete(1.0, tk.END)
-            sorted_df = self.load_and_sort_names(self.file_path.get())
+            sorted_data = self.load_and_sort_values(self.file_path.get())
             self.update_timer(self.end - self.start)
-            self.display_sorted_names(sorted_df)
+            self.display_values_names(sorted_data)
+            self.write_sorting_info()
 
         except Exception as e:
             messagebox.showerror("Error", f"An error occurred: {str(e)}")
@@ -127,7 +129,7 @@ class CarbonEmissionsApp:
             messagebox.showerror("Error", f"An error occurred: {str(e)}")
             return None
 
-    def load_and_sort_names(self, file_path: str) -> List | None:
+    def load_and_sort_values(self, file_path: str) -> List | None:
         try:
             data = self.load_file(file_path)
 
@@ -146,18 +148,28 @@ class CarbonEmissionsApp:
             messagebox.showerror("Error", f"An error occurred: {str(e)}")
             return None
 
-    def display_sorted_names(self, data: List):
+    def display_values_names(self, data: List):
         if data is None:
             self.results_text.insert(tk.END, "No data to display.")
             return
 
-        self.results_text.insert(tk.END, "Values sorted (ascending):\n")
-        self.results_text.insert(tk.END, "------------------------------------\n")
-        self.results_text.insert(tk.END, f"{'Value':<6} \n")
+        self.results_text.insert(tk.END, "Sorted data:\n")
         self.results_text.insert(tk.END, "------------------------------------\n")
 
         for value in data:
-            self.results_text.insert(tk.END, f"{value:<32}\n")
+            self.results_text.insert(tk.END, f"{value}\n")
+
+    def write_sorting_info(self):
+        duration = (self.end - self.start) * 1000. # to milliseconds
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        with open("results/sorting_info.csv", "a", newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow([
+                timestamp,
+                Path(self.file_path.get()).name,
+                self.sorting_implementation.get(),
+                self.sorting_algorithm.get(),
+                f"{duration:.16f}"])
 
 
 if __name__ == "__main__":
