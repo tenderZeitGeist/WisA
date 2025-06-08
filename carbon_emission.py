@@ -154,6 +154,8 @@ class CarbonEmissionsApp:
                 result = sort_function(data)
                 self.end = time.time()
 
+            self.emissions_data = tracker.final_emissions_data
+            messagebox.showinfo("CodeCarbon Result", self.emissions_data)
             return result
 
         except Exception as e:
@@ -181,7 +183,11 @@ class CarbonEmissionsApp:
                 Path(self.file_path.get()).name,
                 self.sorting_implementation.get(),
                 self.sorting_algorithm.get(),
-                f"{duration:.16f}"])
+                f"{duration:.16f}",
+                self.emissions_data.emissions,
+                self.emissions_data.emissions_rate,
+                self.emissions_data.energy_consumed,
+                self.emissions_data.cpu_energy])
 
 
 if __name__ == "__main__":
