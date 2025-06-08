@@ -6,6 +6,10 @@ import pandas as pd
 file_path = Path(__file__).resolve().parent.parent.parent / "results" / "sorting_info.csv"
 df = pd.read_csv(file_path)
 
+###
+#  scatter emission/runtime
+###
+
 df["datatype"] = df["file_name"].apply(lambda name: Path(name).stem.split('.')[0])
 
 color_map = {"Python": "orange", "C++": "blue"}
@@ -48,4 +52,22 @@ fig.legend(handles=type_legend, title="Data Type", loc="lower center", bbox_to_a
 
 plt.tight_layout(rect=[0, 0.2, 1, 1]) 
 
+plt.show()
+
+###
+#  Bar chart emission/algorithm
+###
+
+grouped = df.groupby(["algorithm", "implementation"])["emissions"].mean().unstack()
+
+fig, ax = plt.subplots(figsize=(8, 5))
+grouped.plot(kind="bar", ax=ax, color=["tab:blue", "tab:orange"])
+
+ax.set_title("Average CO₂ Emissions per Algorithm")
+ax.set_ylabel("Emissions (kg CO₂eq)")
+ax.set_xlabel("Sorting Algorithm")
+ax.legend(title="Implementation")
+ax.grid(axis='y', linestyle='--', alpha=0.7)
+
+plt.tight_layout()
 plt.show()
