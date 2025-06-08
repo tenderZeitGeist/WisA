@@ -2,6 +2,7 @@ import csv
 import importlib
 import time
 import tkinter as tk
+import sys
 
 from pathlib import Path
 from tkinter import filedialog, messagebox
@@ -10,6 +11,7 @@ from datetime import datetime
 from typing import Optional, List, Union
 
 def main() -> None:
+    sys.setrecursionlimit(sys.getrecursionlimit() * 16)
     root = tk.Tk()
     app = CarbonEmissionsApp(root)
     root.mainloop()
@@ -22,6 +24,7 @@ class CarbonEmissionsApp:
 
         self.start: float = 0.
         self.end: float = 0.
+        self.emissions_data = None
 
         max_columnspan = 3
         # File selection
@@ -173,6 +176,9 @@ class CarbonEmissionsApp:
             self.results_text.insert(tk.END, f"{n}:\t{value}\n")
 
     def write_sorting_info(self):
+        if self.emissions_data is None:
+            return
+
         duration = (self.end - self.start) * 1000. # to milliseconds
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         with open("results/sorting_info.csv", "a", newline='') as file:
