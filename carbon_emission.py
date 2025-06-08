@@ -1,11 +1,12 @@
+import csv
 import time
 import tkinter as tk
-import pandas as pd
+from tkinter.messagebox import showerror
 
 from pathlib import Path
 from tkinter import filedialog, messagebox
 from codecarbon import EmissionsTracker
-from typing import Dict, Optional
+from typing import Dict, Optional, List, Union
 
 from pandas import DataFrame
 
@@ -54,7 +55,7 @@ class NameSorterApp:
 
     def browse_file(self):
         file_path = filedialog.askopenfilename(
-            filetypes=[("CSV Files", "*.csv"), ("Excel Files", "*.xls;*.xlsx")]
+            filetypes=[("CSV Files", "*.csv")]
         )
         if not file_path:
             return
@@ -74,24 +75,45 @@ class NameSorterApp:
         except Exception as e:
             messagebox.showerror("Error", f"An error occurred: {str(e)}")
 
-    def load_file(self, file_path: str) -> Dict | None:
-        try :
-            file_ext = Path(file_path).suffix.lower()
+    def determine_expected_type(self, value: str) -> type:
+        if value.isdigit():
+            return int
+        try:
+            float(value)
+            return float
+        except ValueError:
+            return str
 
-            if file_ext == '.csv':
-                df = pd.read_csv(file_path, header=None, usecols=[0, 1], names=['Name', 'Count'],
-                                dtype={'Name': str, 'Count': str})
-            elif file_ext in ['.xls', '.xlsx']:
-                df = pd.read_excel(file_path, header=None, usecols=[0, 1], names=['Name', 'Count'])
-            else:
+    def load_file(self, file_path: str) -> Optional[List]:
+        try:
+            path = Path(file_path)
+            file_ext = path.suffix.lower()
+
+            if file_ext != '.csv':
                 messagebox.showerror("Error", f"Unsupported file format: {file_ext}")
                 return None
 
-            df['Count'] = pd.to_numeric(df['Count'], errors='coerce')
-            df = df.dropna(subset=['Count'])
-            df['Count'] = df['Count'].astype(int)
+            result: List[Union[int, float, str]] = []
+            with (open(path, mode='r', newline='') as file):
+                reader = csv.reader(file)
+                first_entry = next(reader)
+                expected_type = self.determine_expected_type(first_entry[0])
+                file.seek(0)
 
-            return df.set_index('Name')['Count'].to_dict()
+                for row in reader:
+                    if len(row) != 1:
+                        raise Exception(f"Unexpected row length: Expected a length of 1 but got {len(row)}")
+                    try:
+                        if expected_type is int:
+                            result.append(int(row[0]))
+                        elif expected_type is float:
+                            result.append(float(row[0]))
+                        else:
+                            result.append(row[0])
+                    except ValueError:
+                        raise Exception(
+                            f"Unexpected value type: Expected either int, float or string, instead got {type(row[0])}")
+            return result
 
         except FileNotFoundError:
             messagebox.showerror("Error", f"File not found at {file_path}")
@@ -104,9 +126,13 @@ class NameSorterApp:
         try:
             data = self.load_file(file_path)
 
+            if not data or len(data) == 0:
+                messagebox.showerror("Error", f"Unable to load data contents")
+                return None
+
             with EmissionsTracker() as tracker:
                 self.start = time.time()
-                result = dict(sorted(data.items(), key=lambda item: item[1], reverse=True))
+                result = sorted(data)
                 self.end = time.time()
 
             return result
@@ -115,18 +141,18 @@ class NameSorterApp:
             messagebox.showerror("Error", f"An error occurred: {str(e)}")
             return None
 
-    def display_sorted_names(self, data: Dict):
+    def display_sorted_names(self, data: List):
         if data is None:
             self.results_text.insert(tk.END, "No data to display.")
             return
 
-        self.results_text.insert(tk.END, "Names sorted by count (descending):\n")
+        self.results_text.insert(tk.END, "Values sorted (ascending):\n")
         self.results_text.insert(tk.END, "------------------------------------\n")
-        self.results_text.insert(tk.END, f"{'Rank':<6} {'Name':<20} {'Count':<10}\n")
+        self.results_text.insert(tk.END, f"{'Value':<6} \n")
         self.results_text.insert(tk.END, "------------------------------------\n")
 
-        for rank, (name, count) in enumerate(data.items(), start=1):
-            self.results_text.insert(tk.END, f"{rank:<6} {name:<20} {count:<10}\n")
+        for value in data:
+            self.results_text.insert(tk.END, f"{value:<32}\n")
 
 
 if __name__ == "__main__":
