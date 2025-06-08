@@ -13,11 +13,11 @@ from pandas import DataFrame
 
 def main() -> None:
     root = tk.Tk()
-    app = NameSorterApp(root)
+    app = CarbonEmissionsApp(root)
     root.mainloop()
 
 
-class NameSorterApp:
+class CarbonEmissionsApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Value Sorter")
