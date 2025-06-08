@@ -1,4 +1,5 @@
 import csv
+import importlib
 import time
 import tkinter as tk
 from tkinter.messagebox import showerror
@@ -137,9 +138,21 @@ class CarbonEmissionsApp:
                 messagebox.showerror("Error", f"Unable to load data contents")
                 return None
 
+            implementation = self.sorting_implementation.get()
+            algorithm = self.sorting_algorithm.get().lower().replace(' ', '_')
+            if implementation == "Python":
+                module_name = "py.sort.sort"
+            elif implementation == "C++":
+                module_name = "lib.sorting_algorithms"
+            else:
+                raise ValueError(f"Unsupported implementation: {implementation}")
+
+            sort_module = importlib.import_module(module_name)
+            sort_function = getattr(sort_module, algorithm)
+
             with EmissionsTracker() as tracker:
                 self.start = time.time()
-                result = sorted(data)
+                result = sort_function(data)
                 self.end = time.time()
 
             return result
@@ -153,11 +166,11 @@ class CarbonEmissionsApp:
             self.results_text.insert(tk.END, "No data to display.")
             return
 
-        self.results_text.insert(tk.END, "Sorted data:\n")
+        self.results_text.insert(tk.END, "\tSorted data:\n")
         self.results_text.insert(tk.END, "------------------------------------\n")
 
-        for value in data:
-            self.results_text.insert(tk.END, f"{value}\n")
+        for n, value in enumerate(data, start=1):
+            self.results_text.insert(tk.END, f"{n}:\t{value}\n")
 
     def write_sorting_info(self):
         duration = (self.end - self.start) * 1000. # to milliseconds
