@@ -4,7 +4,7 @@
 
 def insertion_sort(data):
     if not data:
-        return
+        return None
     
     for i in range(len(data)):
         key = data[i]
@@ -14,6 +14,8 @@ def insertion_sort(data):
             data[j] = data[j - 1]
             j -= 1
         data[j] = key
+
+    return data
 
 #
 # quick sort
@@ -34,7 +36,7 @@ def partition(data, low, high):
 
 def quick_sort(data):
     if not data:
-        return
+        return None
     
     def _quick_sort(data, low, high):
         if low < high: 
@@ -45,6 +47,8 @@ def quick_sort(data):
 
     if data:
         _quick_sort(data, 0, len(data) - 1)
+
+    return data
 
 # iterative/in place
 
@@ -57,6 +61,8 @@ def quick_sort_it(data):
             p = partition(data, low, high)
             stack.append((low, p - 1))
             stack.append((p + 1, high))
+
+    return data
 
 # 
 # heap sort
@@ -75,11 +81,11 @@ def heapify(data, n , index):
 
     if largest != index:
         data[index], data[largest] = data[largest], data[index]
-        heapify(data, n, largest)                
+        heapify(data, n, largest)
 
 def heap_sort(data):
     if not data:
-        return
+        return data
     
     n = len(data)
     for i in range(n // 2 - 1, -1, -1):
@@ -88,3 +94,5 @@ def heap_sort(data):
     for i in range(n - 1, 0, -1):
         data[0], data[i] = data[i], data[0]
         heapify(data, i, 0)
+
+    return data
