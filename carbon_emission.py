@@ -19,7 +19,7 @@ def main() -> None:
 class NameSorterApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("Name Sorter")
+        self.root.title("Value Sorter")
 
         self.start: float = 0.
         self.end: float = 0.
@@ -31,9 +31,10 @@ class NameSorterApp:
         tk.Button(root, text="Browse", command=self.browse_file).grid(row=0, column=2, padx=10, pady=10)
 
         # Sorting algorithm selection
-        self.sorting_algorithm = tk.StringVar(value="Default")
+        defaultValue = "Insertion Sort"
+        self.sorting_algorithm = tk.StringVar(value=defaultValue)
         tk.Label(root, text="Select Sorting Algorithm:").grid(row=1, column=0, padx=10, pady=10)
-        sorting_algorithms = ["Default", "Merge Sort", "Heap Sort"]
+        sorting_algorithms = [defaultValue, "Quick Sort", "Heap Sort"]
         self.sorting_menu = tk.OptionMenu(root, self.sorting_algorithm, *sorting_algorithms)
         self.sorting_menu.grid(row=1, column=1, padx=10, pady=10)
 
