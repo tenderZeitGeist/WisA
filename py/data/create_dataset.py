@@ -15,7 +15,6 @@ def generate_random_strings(n):
 def save_to_csv(filename, data):
     with open(filename, mode='w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(['value'])
         for value in data:
             writer.writerow([value])
 
