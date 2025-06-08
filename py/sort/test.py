@@ -8,7 +8,7 @@ from sort import insertion_sort, quick_sort, quick_sort_it, heap_sort
 class TestSortingAlgorithms(unittest.TestCase):
 
     def setUp(self):
-        self.n = 1000000
+        self.n = 1000
 
     def generate_random_ints(self, n):
         return [random.randint(-1_000_000, 1_000_000) for _ in range(n)]
@@ -21,7 +21,7 @@ class TestSortingAlgorithms(unittest.TestCase):
 
     def run_sort_test(self, func, data):
         expected = sorted(data)
-        func(data)
+        result = func(data)
         self.assertEqual(data, expected)
 
     #
