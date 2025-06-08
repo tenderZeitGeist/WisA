@@ -143,7 +143,7 @@ class CarbonEmissionsApp:
             if implementation == "Python":
                 module_name = "py.sort.sort"
             elif implementation == "C++":
-                module_name = "lib.sorting_algorithms"
+                module_name = "cpp.sort.sorting_algorithms"
             else:
                 raise ValueError(f"Unsupported implementation: {implementation}")
 
