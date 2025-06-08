@@ -6,10 +6,7 @@ from tkinter.messagebox import showerror
 from pathlib import Path
 from tkinter import filedialog, messagebox
 from codecarbon import EmissionsTracker
-from typing import Dict, Optional, List, Union
-
-from pandas import DataFrame
-
+from typing import Optional, List, Union
 
 def main() -> None:
     root = tk.Tk()
@@ -25,6 +22,7 @@ class CarbonEmissionsApp:
         self.start: float = 0.
         self.end: float = 0.
 
+        max_columnspan = 3
         # File selection
         self.file_path: tk.StringVar = tk.StringVar()
         tk.Label(root, text="Select File:").grid(row=0, column=0, padx=10, pady=10)
@@ -32,23 +30,30 @@ class CarbonEmissionsApp:
         tk.Button(root, text="Browse", command=self.browse_file).grid(row=0, column=2, padx=10, pady=10)
 
         # Sorting algorithm selection
-        defaultValue = "Insertion Sort"
-        self.sorting_algorithm = tk.StringVar(value=defaultValue)
+        default_implementation_value = "Python"
+        self.sorting_algorithm = tk.StringVar(value=default_implementation_value)
         tk.Label(root, text="Select Sorting Algorithm:").grid(row=1, column=0, padx=10, pady=10)
-        sorting_algorithms = [defaultValue, "Quick Sort", "Heap Sort"]
+        sorting_algorithms = [default_implementation_value, "C++"]
         self.sorting_menu = tk.OptionMenu(root, self.sorting_algorithm, *sorting_algorithms)
-        self.sorting_menu.grid(row=1, column=1, padx=10, pady=10)
+        self.sorting_menu.grid(row=1, column=1, padx=10, pady=10, sticky='w')
+
+        # Sorting algorithm selection
+        default_sorting_value = "Insertion Sort"
+        self.sorting_algorithm = tk.StringVar(value=default_sorting_value)
+        sorting_algorithms = [default_sorting_value, "Quick Sort", "Heap Sort"]
+        self.sorting_menu = tk.OptionMenu(root, self.sorting_algorithm, *sorting_algorithms)
+        self.sorting_menu.grid(row=1, column=1, padx=10, pady=10, sticky='e')
 
         # Sort button
-        tk.Button(root, text="Sort Names by Count", command=self.sort_names).grid(row=1, column=2,
+        tk.Button(root, text="Sort", command=self.sort_names).grid(row=1, column=2,
                                                                                   padx=10, pady=10)
         # Results display
         self.results_text = tk.Text(root, height=20, width=70)
-        self.results_text.grid(row=3, column=0, columnspan=3, padx=10, pady=10)
+        self.results_text.grid(row=3, column=0, columnspan=max_columnspan, padx=10, pady=10)
 
         # Timer
         self.timer_label = tk.Label(root, text="Sorting Duration: 0.00 seconds")
-        self.timer_label.grid(row=4, column=0, columnspan=3, padx=10, pady=10)
+        self.timer_label.grid(row=4, column=0, columnspan=max_columnspan, padx=10, pady=10)
 
     def update_timer(self, duration: float):
         self.timer_label.config(text=f"Sorting Duration: {duration:.2f} seconds")
@@ -122,7 +127,7 @@ class CarbonEmissionsApp:
             messagebox.showerror("Error", f"An error occurred: {str(e)}")
             return None
 
-    def load_and_sort_names(self, file_path: str) -> DataFrame | None:
+    def load_and_sort_names(self, file_path: str) -> List | None:
         try:
             data = self.load_file(file_path)
 
