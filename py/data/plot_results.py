@@ -6,10 +6,10 @@ import pandas as pd
 import seaborn as sns
 sns.set_theme(style="whitegrid")
 
-output_dir = "py/plots/one_million"
+output_dir = "py/plots/ten_million"
 os.makedirs(output_dir, exist_ok=True)
 
-file_path = Path(__file__).resolve().parent.parent.parent / "results" / "sorting_info_linux_one_million.csv"
+file_path = Path(__file__).resolve().parent.parent.parent / "results" / "sorting_info_linux_ten_million.csv"
 df = pd.read_csv(file_path)
 
 ###
@@ -71,8 +71,6 @@ for algorithm in algorithms:
     safe_name = algorithm.replace(" ", "_").lower()
     plt.savefig(os.path.join(output_dir, f"{safe_name}.jpg"), format="jpg", dpi=300)
 
-    plt.show()
-
 
 
 ###
@@ -93,7 +91,6 @@ ax.grid(axis='y', linestyle='--', alpha=0.7)
 
 plt.tight_layout()
 plt.savefig(os.path.join(output_dir, "bar_chart.jpg"), format="jpg", dpi=300)
-plt.show()
 
 ####
 # Energy per ms
@@ -113,8 +110,6 @@ plt.xticks(rotation=45)
 plt.tight_layout()
 
 plt.savefig(os.path.join(output_dir, "energy-efficiency_bar_chart.jpg"), format="jpg", dpi=300)
-
-plt.show()
 
 ####
 # CPU Emission per algorithm
@@ -141,7 +136,6 @@ plt.ylabel("CPU-Emissions (kg CO$_2$eq)")
 plt.legend(title="Datatype", bbox_to_anchor=(1.02, 1), loc="upper left")
 plt.tight_layout()
 plt.savefig(os.path.join(output_dir, "emissions-cpp_bar_chart.jpg"), format="jpg", dpi=300)
-plt.show()
 
 # Python
 py_df = df[df["implementation"] == "Python"]
@@ -165,25 +159,3 @@ plt.ylabel("CPU-Emissionen (kg CO$_2$eq)")
 plt.legend(title="Datentyp", bbox_to_anchor=(1.02, 1), loc="upper left")
 plt.tight_layout()
 plt.savefig(os.path.join(output_dir, "emissions-python_bar_chart.jpg"), format="jpg", dpi=300)
-plt.show()
-
-####
-# Emissions per ms
-####
-
-#df["efficiency_score"] =  df["cpu_emissions"] / df["time_in_milliseconds"]
-
-#grouped = df.groupby(["algorithm", "datatype"])["efficiency_score"].mean().unstack()
-
-#plt.figure(figsize=(10, 6))
-
-#grouped.plot(kind="bar", figsize=(10, 6), colormap="viridis")
-#plt.ylabel("Emission per ms (kg CO$_2$eq/ms)")
-#plt.xlabel("")
-#plt.title("Emission-Efficiency by Algorithm and Datatype", fontsize=14, fontweight='bold')
-#plt.xticks(rotation=45)
-#plt.tight_layout()
-
-#plt.savefig(os.path.join(output_dir, "emission-efficiency_bar_chart.jpg"), format="jpg", dpi=300)
-
-#plt.show()
