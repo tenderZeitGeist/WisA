@@ -37,14 +37,14 @@ class CarbonEmissionsApp:
         default_implementation_value = "Python"
         self.sorting_implementation = tk.StringVar(value=default_implementation_value)
         tk.Label(root, text="Select Sorting Algorithm:").grid(row=1, column=0, padx=10, pady=10)
-        sorting_algorithms = [default_implementation_value, "C++"]
-        self.sorting_implementation_menu = tk.OptionMenu(root, self.sorting_implementation, *sorting_algorithms)
+        sorting_implementation = [default_implementation_value, "C++"]
+        self.sorting_implementation_menu = tk.OptionMenu(root, self.sorting_implementation, *sorting_implementation)
         self.sorting_implementation_menu.grid(row=1, column=1, padx=10, pady=10, sticky='w')
 
         # Sorting algorithm selection
         default_sorting_value = "Insertion Sort"
         self.sorting_algorithm = tk.StringVar(value=default_sorting_value)
-        sorting_algorithms = [default_sorting_value, "Quick Sort", "Heap Sort"]
+        sorting_algorithms = [default_sorting_value, "Quick Sort", "Heap Sort", "Merge Sort"]
         self.sorting_algorithm_menu = tk.OptionMenu(root, self.sorting_algorithm, *sorting_algorithms)
         self.sorting_algorithm_menu.grid(row=1, column=1, padx=10, pady=10, sticky='e')
 
@@ -181,6 +181,10 @@ class CarbonEmissionsApp:
 
         duration = (self.end - self.start) * 1000. # to milliseconds
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        energy_consumed = self.emissions_data.energy_consumed
+        cpu_energy = self.emissions_data.cpu_energy
+        cpu_percentage = 1. - (energy_consumed - cpu_energy) / energy_consumed
+        cpu_emissions = self.emissions_data.emissions * cpu_percentage
         with open("results/sorting_info.csv", "a", newline='') as file:
             writer = csv.writer(file)
             writer.writerow([
@@ -191,8 +195,10 @@ class CarbonEmissionsApp:
                 f"{duration:.16f}",
                 self.emissions_data.emissions,
                 self.emissions_data.emissions_rate,
-                self.emissions_data.energy_consumed,
-                self.emissions_data.cpu_energy])
+                energy_consumed,
+                cpu_energy,
+                cpu_emissions,
+                f"{cpu_percentage * 100.:.2f}"])
 
 
 if __name__ == "__main__":

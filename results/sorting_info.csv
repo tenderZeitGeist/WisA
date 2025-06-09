@@ -1,1 +1,1 @@
-date,file_name,implementation,algorithm,time_in_milliseconds,emissions,emissions_rate,energy_consumed,cpu_energy
+date,file_name,implementation,algorithm,time_in_milliseconds,emissions,emissions_rate,energy_consumed,cpu_energy,cpu_emissions,cpu_percentage
