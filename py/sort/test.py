@@ -3,7 +3,7 @@
 import unittest
 import random
 import string
-from sort import insertion_sort, quick_sort, quick_sort_it, heap_sort
+from sort import insertion_sort, quick_sort, merge_sort, heap_sort
 
 class TestSortingAlgorithms(unittest.TestCase):
 
@@ -40,6 +40,9 @@ class TestSortingAlgorithms(unittest.TestCase):
         data = self.generate_random_ints(self.n)
         self.run_sort_test(heap_sort, data)   
 
+    def test_merge_sort_ints(self):
+        data = self.generate_random_ints(self.n)
+        self.run_sort_test(merge_sort, data)    
 
     #
     # float tests
@@ -57,6 +60,9 @@ class TestSortingAlgorithms(unittest.TestCase):
         data = self.generate_random_floats(self.n)
         self.run_sort_test(heap_sort, data)
 
+    def test_merge_sort_floats(self):
+        data = self.generate_random_floats(self.n)
+        self.run_sort_test(merge_sort, data)    
 
     #
     # string test
@@ -73,6 +79,10 @@ class TestSortingAlgorithms(unittest.TestCase):
     def test_heap_sort_strings(self):
         data = self.generate_random_strings(self.n)
         self.run_sort_test(heap_sort, data)
+
+    def test_merge_sort_strings(self):
+        data = self.generate_random_strings(self.n)
+        self.run_sort_test(merge_sort, data)    
 
 
 if __name__ == "__main__":

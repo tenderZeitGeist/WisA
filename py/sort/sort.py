@@ -1,6 +1,6 @@
-#
+####
 # insertion sort
-#
+####
 
 def insertion_sort(data):
     if not data:
@@ -17,9 +17,9 @@ def insertion_sort(data):
 
     return data
 
-#
+####
 # quick sort
-#
+####
 
 def partition(data, low, high):
     pivot = data[high]
@@ -64,9 +64,9 @@ def quick_sort_it(data):
 
     return data
 
-# 
+####
 # heap sort
-#
+####
 
 def heapify(data, n , index):
     largest = index
@@ -96,3 +96,47 @@ def heap_sort(data):
         heapify(data, i, 0)
 
     return data
+
+####
+# merge sort
+####
+
+def merge_sort(arr):
+    def reduce(arr, temp, left, right):
+        if left >= right:
+            return
+
+        mid = (left + right) // 2
+        reduce(arr, temp, left, mid)
+        reduce(arr, temp, mid + 1, right)
+        merge(arr, temp, left, mid, right)
+
+    def merge(arr, temp, left, mid, right):
+        i, j = left, mid + 1
+        k = left
+
+        while i <= mid and j <= right:
+            if arr[i] <= arr[j]:
+                temp[k] = arr[i]
+                i += 1
+            else:
+                temp[k] = arr[j]
+                j += 1
+            k += 1
+
+        while i <= mid:
+            temp[k] = arr[i]
+            i += 1
+            k += 1
+
+        while j <= right:
+            temp[k] = arr[j]
+            j += 1
+            k += 1
+
+        for idx in range(left, right + 1):
+            arr[idx] = temp[idx]
+
+    temp = [0] * len(arr)
+    reduce(arr, temp, 0, len(arr) - 1)
+    return arr
