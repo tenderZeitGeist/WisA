@@ -25,4 +25,10 @@ void sort(std::vector<float>& container);
 void sort(std::vector<std::string>& container);
 }
 
+namespace merge {
+void sort(std::vector<int>& container);
+void sort(std::vector<float>& container);
+void sort(std::vector<std::string>& container);
+}
+
 }

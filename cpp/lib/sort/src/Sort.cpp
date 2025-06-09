@@ -2,6 +2,7 @@
 #include <sort/Sort.hpp>
 
 #include <concepts>
+#include <span>
 #include <type_traits>
 #include <vector>
 
@@ -126,6 +127,83 @@ void insertionSort(std::vector<T>& v) {
     }
 }
 
+template<TrivialType T>
+void merge(std::vector<T>& v, std::vector<T>& temp, std::size_t left, std::size_t mid, std::size_t right) {
+    std::size_t i = left;
+    std::size_t j = mid + 1;
+    std::size_t k = left;
+
+    while (i <= mid && j <= right) {
+        if (v[i] <= v[j]) {
+            temp[k++] = v[i++];
+        } else {
+            temp[k++] = v[j++];
+        }
+    }
+
+    while (i <= mid) {
+        temp[k++] = v[i++];
+    }
+
+    while (j <= right) {
+        temp[k++] = v[j++];
+    }
+
+    for (std::size_t index = left; index <= right; ++index) {
+        v[index] = temp[index];
+    }
+}
+
+template<NonTrivialType T>
+void merge(std::vector<T>& v, std::vector<T>& temp, std::size_t left, std::size_t mid, std::size_t right) {
+    std::size_t i = left;
+    std::size_t j = mid + 1;
+    std::size_t k = left;
+
+    while (i <= mid && j <= right) {
+        if (v[i] <= v[j]) {
+            temp[k++] = std::move(v[i++]);
+        } else {
+            temp[k++] = std::move(v[j++]);
+        }
+    }
+
+    while (i <= mid) {
+        temp[k++] = std::move(v[i++]);
+    }
+
+    while (j <= right) {
+        temp[k++] = std::move(v[j++]);
+    }
+
+    for (std::size_t l = left; l <= right; ++l) {
+        v[l] = std::move(temp[l]);
+    }
+}
+
+template<typename T>
+void mergeSort(std::vector<T>& v, std::vector<T>& temp, std::size_t left, std::size_t right) {
+    const auto size = v.size();
+    if (left >= right || left > size - 1 || right > size - 1) {
+        return;
+    }
+
+    const auto mid = (left + right) / 2;
+    mergeSort(v, temp, left, mid);
+    mergeSort(v, temp, mid + 1, right);
+    merge(v, temp, left, mid, right);
+}
+
+template<typename T>
+void mergeSort(std::vector<T>& v) {
+    const auto size = v.size();
+    if (v.empty() || v.size() <= 1) {
+        return;
+    }
+    std::vector<T> temp(v);
+    mergeSort(v, temp, 0, size - 1);
+}
+
 } // namespace
 
 namespace algorithm {
@@ -174,6 +252,22 @@ void sort(std::vector<float>& container) {
 
 void sort(std::vector<std::string>& container) {
     insertionSort(container);
+}
+
+}
+
+namespace merge {
+
+void sort(std::vector<int>& container) {
+    mergeSort(container);
+}
+
+void sort(std::vector<float>& container) {
+    mergeSort(container);
+}
+
+void sort(std::vector<std::string>& container) {
+    mergeSort(container);
 }
 
 }

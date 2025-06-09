@@ -47,4 +47,10 @@ PYBIND11_MODULE(sorting_algorithms, module) {
             "insertion_sort",
             [](py::list& list) { return sort_list(list, [](auto& v) { algorithm::insertion::sort(v); }); },
             "Sort a list using insertion sort");
+
+    //// Merge sort
+    module.def(
+            "merge_sort",
+            [](py::list& list) { return sort_list(list, [](auto& v) { algorithm::merge::sort(v); }); },
+            "Sort a list using merge sort");
 }

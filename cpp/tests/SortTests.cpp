@@ -59,6 +59,11 @@ protected:
         checkSortingAlgorithm<T, algorithm::insertion::sort>(v);
     }
 
+    template<typename T>
+    void checkMergeSort(std::vector<T>& v) {
+        checkSortingAlgorithm<T, algorithm::merge::sort>(v);
+    }
+
     std::vector<int> m_ints;
     std::vector<float> m_floats;
     std::vector<std::string> m_strings;
@@ -98,5 +103,17 @@ TEST_F(SortingTestSuite, insertion_sort_floats) {
 }
 
 TEST_F(SortingTestSuite, insertion_sort_strings) {
+    checkInsertionSort(m_strings);
+}
+
+TEST_F(SortingTestSuite, merge_sort_integers) {
+    checkMergeSort(m_ints);
+}
+
+TEST_F(SortingTestSuite, merge_sort_floats) {
+    checkMergeSort(m_floats);
+}
+
+TEST_F(SortingTestSuite, merge_sort_strings) {
     checkInsertionSort(m_strings);
 }
