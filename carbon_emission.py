@@ -48,9 +48,14 @@ class CarbonEmissionsApp:
         self.sorting_algorithm_menu = tk.OptionMenu(root, self.sorting_algorithm, *sorting_algorithms)
         self.sorting_algorithm_menu.grid(row=1, column=1, padx=10, pady=10, sticky='e')
 
+        # Number of sorting runs
+        self.num_runs: tk.IntVar = tk.IntVar(value=1)
+        tk.Label(root, text="Number of Runs:").grid(row=2, column=0, padx=10, pady=10)
+        tk.Entry(root, textvariable=self.num_runs, width=10).grid(row=2, column=1, padx=10, pady=10, sticky='w')
+
         # Sort button
-        tk.Button(root, text="Sort", command=self.sort_names).grid(row=1, column=2,
-                                                                                  padx=10, pady=10)
+        tk.Button(root, text="Sort", command=self.sort_names).grid(row=2, column=1,
+                                                                                  padx=10, pady=10, sticky='e')
         # Results display
         self.results_text = tk.Text(root, height=20, width=70)
         self.results_text.grid(row=3, column=0, columnspan=max_columnspan, padx=10, pady=10)
@@ -76,11 +81,12 @@ class CarbonEmissionsApp:
             return
 
         try:
-            self.results_text.delete(1.0, tk.END)
-            sorted_data = self.load_and_sort_values(self.file_path.get())
-            self.update_timer(self.end - self.start)
-            self.display_values_names(sorted_data)
-            self.write_sorting_info()
+            for _ in range(self.num_runs.get()):
+                self.results_text.delete(1.0, tk.END)
+                sorted_data = self.load_and_sort_values(self.file_path.get())
+                self.update_timer(self.end - self.start)
+                self.display_values_names(sorted_data)
+                self.write_sorting_info()
 
         except Exception as e:
             messagebox.showerror("Error", f"An error occurred: {str(e)}")
