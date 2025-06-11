@@ -12,66 +12,131 @@ os.makedirs(output_dir, exist_ok=True)
 file_path = Path(__file__).resolve().parent.parent.parent / "results" / "sorting_info_linux_ten_million.csv"
 df = pd.read_csv(file_path)
 
-###
-#  scatter cpu_emissions/runtime
-###
-
 df["datatype"] = df["file_name"].apply(
     lambda name: next((t for t in ("int", "float", "string") if t in name), "unknown")
 )
 
-color_map = {"Python": "orange", "C++": "blue"}
-marker_map = {"string": "o", "float": "X", "int": "D"}
+####
+# runtime / language / algorithm
+####
 
-df["efficiency_score"] =  df["cpu_emissions"] / df["time_in_milliseconds"]
-grouped_df = (
-    df.groupby(["algorithm", "implementation", "datatype"])[["time_in_milliseconds", "efficiency_score"]]
+grouped = (
+    df.groupby(["algorithm", "implementation", "datatype"])["time_in_milliseconds"]
     .mean()
     .reset_index()
 )
 
-algorithms = grouped_df["algorithm"].unique()
+grouped["label"] = grouped["implementation"] + " | " + grouped["datatype"]
 
-for algorithm in algorithms:
-    subset = grouped_df[grouped_df["algorithm"] == algorithm]
-    
-    fig, ax = plt.subplots(figsize=(7, 5))
-    
+plt.figure(figsize=(12, 6))
+sns.barplot(
+    data=grouped,
+    x="algorithm",
+    y="time_in_milliseconds",
+    hue="label",
+    palette="Paired"
+)
+
+plt.ylabel("Average Runtime (ms)")
+plt.title("Runtime á Algorithm, Language & Datatype", fontsize=14, fontweight='bold')
+plt.legend(title="Language | Datatype", bbox_to_anchor=(1.02, 1), loc="upper left")
+plt.tight_layout()
+
+plt.savefig(os.path.join(output_dir, "cpu_energy_grouped_bar_chart_detailed.jpg"), format="jpg", dpi=300)
+plt.close()
+
+
+####
+# energy / language / algorithm
+####
+
+grouped = (
+    df.groupby(["algorithm", "implementation", "datatype"])["cpu_energy"]
+    .mean()
+    .reset_index()
+)
+
+grouped["label"] = grouped["implementation"] + " | " + grouped["datatype"]
+
+plt.figure(figsize=(12, 6))
+sns.barplot(
+    data=grouped,
+    x="algorithm",
+    y="cpu_energy",
+    hue="label",
+    palette="Paired"
+)
+
+plt.ylabel("Average CPU-Energy (kWh)")
+plt.title("CPU-Energy á Algorithm, Language & Datatype", fontsize=14, fontweight='bold')
+plt.legend(title="Language | Datatype", bbox_to_anchor=(1.02, 1), loc="upper left")
+plt.tight_layout()
+
+plt.savefig(os.path.join(output_dir, "cpu_energy_grouped_bar_chart_detailed.jpg"), format="jpg", dpi=300)
+plt.close()
+
+
+###
+#  bubble cpu_emissions/runtime
+###
+
+color_map = {"Python": "orange", "C++": "blue"}
+marker_map = {"string": "o", "float": "X", "int": "D"}
+
+df["efficiency_score"] = df["cpu_emissions"] / (df["time_in_milliseconds"] / 1000) 
+grouped = (
+    df.groupby(["algorithm", "implementation", "datatype"])[
+        ["time_in_milliseconds", "efficiency_score", "cpu_emissions"]
+    ]
+    .mean()
+    .reset_index()
+)
+
+grouped["bubble_size"] = grouped["cpu_emissions"] * 1e8 # one million scale = 1e9, ten million 1e8
+
+color_map = {"Python": "orange", "C++": "blue"}
+
+for algo in grouped["algorithm"].unique():
+    subset = grouped[grouped["algorithm"] == algo]
+
+    fig, ax = plt.subplots(figsize=(10, 7))
     for _, row in subset.iterrows():
         ax.scatter(
             row["time_in_milliseconds"],
             row["efficiency_score"],
+            s=row["bubble_size"],
             color=color_map.get(row["implementation"], "gray"),
-            marker=marker_map.get(row["datatype"], "x"),
-            s=100,
-            alpha=0.8
+            alpha=0.6,
+            edgecolor="black",
+            linewidth=0.5
+        )
+        ax.text(
+            row["time_in_milliseconds"],
+            row["efficiency_score"],
+            row["datatype"],
+            ha="center",
+            va="center",
+            fontsize=9,
+            color="black",
+            weight="bold"
         )
 
-    ax.set_title(f"{algorithm} - Time vs CPU Emissions Rate", fontsize=14, fontweight='bold')
-    ax.set_xlabel("Time (ms)")
-    ax.set_ylabel("CPU Emission rate (kg CO$_2$eq/ms)")
-    ax.grid(True, linestyle='--', alpha=0.6)
-    ax.ticklabel_format(style='plain', axis='y')
-    ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: f'{x:.2e}'))
+    ax.set_title(f"{algo} - CPU Efficiency by Datatype", fontsize=15, fontweight='bold')
+    ax.set_xlabel("Time (s)")
+    ax.set_ylabel("CPU Emission Rate (kg CO$_2$eq/s)")
+    ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: f"{x:.2e}"))
+    ax.grid(True, linestyle='--', alpha=0.7)
 
-    impl_legend = [Line2D([0], [0], color=color, lw=4, label=impl) for impl, color in color_map.items()]
-    type_legend = [Line2D([0], [0], marker=marker, color='black', linestyle='None',
-                        markersize=10, label=dtype) for dtype, marker in marker_map.items()]
+    handles = [
+        plt.Line2D([0], [0], marker='o', color='w', label=impl,
+                   markerfacecolor=color, markersize=10)
+        for impl, color in color_map.items()
+    ]
+    ax.legend(handles=handles, title="Implementation", bbox_to_anchor=(1.02, 1), loc="upper left")
 
-    ax.legend(
-        handles=impl_legend + type_legend,
-        title="Legend",
-        loc="lower left",
-        bbox_to_anchor=(1.02, 0),
-        borderaxespad=0
-    )
-
-    plt.tight_layout(rect=[0, 0, 1, 1])
-
-    safe_name = algorithm.replace(" ", "_").lower()
-    plt.savefig(os.path.join(output_dir, f"{safe_name}.jpg"), format="jpg", dpi=300)
-
-
+    plt.tight_layout()
+    plt.savefig(os.path.join(output_dir, f"bubble_{algo.replace(' ', '_').lower()}.jpg"), dpi=300)
+    plt.close()
 
 ###
 #  Bar chart cpu emission/algorithm
@@ -91,6 +156,7 @@ ax.grid(axis='y', linestyle='--', alpha=0.7)
 
 plt.tight_layout()
 plt.savefig(os.path.join(output_dir, "bar_chart.jpg"), format="jpg", dpi=300)
+plt.close()
 
 ####
 # Energy per ms
@@ -110,6 +176,7 @@ plt.xticks(rotation=45)
 plt.tight_layout()
 
 plt.savefig(os.path.join(output_dir, "energy-efficiency_bar_chart.jpg"), format="jpg", dpi=300)
+plt.close()
 
 ####
 # CPU Emission per algorithm
@@ -136,8 +203,8 @@ plt.ylabel("CPU-Emissions (kg CO$_2$eq)")
 plt.legend(title="Datatype", bbox_to_anchor=(1.02, 1), loc="upper left")
 plt.tight_layout()
 plt.savefig(os.path.join(output_dir, "emissions-cpp_bar_chart.jpg"), format="jpg", dpi=300)
+plt.close()
 
-# Python
 py_df = df[df["implementation"] == "Python"]
 py_grouped = (
     py_df.groupby(["algorithm", "datatype"])["cpu_emissions"]
@@ -159,3 +226,4 @@ plt.ylabel("CPU-Emissionen (kg CO$_2$eq)")
 plt.legend(title="Datentyp", bbox_to_anchor=(1.02, 1), loc="upper left")
 plt.tight_layout()
 plt.savefig(os.path.join(output_dir, "emissions-python_bar_chart.jpg"), format="jpg", dpi=300)
+plt.close()
