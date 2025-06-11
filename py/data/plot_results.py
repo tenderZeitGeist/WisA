@@ -6,10 +6,10 @@ import pandas as pd
 import seaborn as sns
 sns.set_theme(style="whitegrid")
 
-output_dir = "py/plots/ten_million"
+output_dir = "py/plots/one_million"
 os.makedirs(output_dir, exist_ok=True)
 
-file_path = Path(__file__).resolve().parent.parent.parent / "results" / "sorting_info_linux_ten_million.csv"
+file_path = Path(__file__).resolve().parent.parent.parent / "results" / "sorting_info_linux_one_million.csv"
 df = pd.read_csv(file_path)
 
 df["datatype"] = df["file_name"].apply(
@@ -83,7 +83,8 @@ plt.close()
 color_map = {"Python": "orange", "C++": "blue"}
 marker_map = {"string": "o", "float": "X", "int": "D"}
 
-df["efficiency_score"] = df["cpu_emissions"] / (df["time_in_milliseconds"] / 1000) 
+df["time_s"] = (df["time_in_milliseconds"] / 1000)
+df["efficiency_score"] = df["cpu_emissions"] / df["time_s"]
 grouped = (
     df.groupby(["algorithm", "implementation", "datatype"])[
         ["time_in_milliseconds", "efficiency_score", "cpu_emissions"]
@@ -91,8 +92,9 @@ grouped = (
     .mean()
     .reset_index()
 )
+grouped["time_s"] = grouped["time_in_milliseconds"] / 1000
 
-grouped["bubble_size"] = grouped["cpu_emissions"] * 1e8 # one million scale = 1e9, ten million 1e8
+grouped["bubble_size"] = grouped["cpu_emissions"] * 1e9 # one million scale = 1e9, ten million 1e8
 
 color_map = {"Python": "orange", "C++": "blue"}
 
@@ -102,7 +104,7 @@ for algo in grouped["algorithm"].unique():
     fig, ax = plt.subplots(figsize=(10, 7))
     for _, row in subset.iterrows():
         ax.scatter(
-            row["time_in_milliseconds"],
+            row["time_s"],
             row["efficiency_score"],
             s=row["bubble_size"],
             color=color_map.get(row["implementation"], "gray"),
@@ -111,7 +113,7 @@ for algo in grouped["algorithm"].unique():
             linewidth=0.5
         )
         ax.text(
-            row["time_in_milliseconds"],
+            row["time_s"],
             row["efficiency_score"],
             row["datatype"],
             ha="center",
